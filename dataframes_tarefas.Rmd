@@ -1,0 +1,59 @@
+---
+title: "df_tarefas"
+output:
+  html_document:
+    df_print: paged
+---
+
+## 1
+
+Utilize o dataset população países para aplicar as funções mostradas no slide “Data frames – Atributos e Estrutura” e reporte os resultados encontrados:
+
+```{r}
+
+
+```
+
+
+## 2 
+
+Utilize o dataset população países para aplicar o operador [[ mostrados no slide “Data frames – Subconjuntos”, para selecionar colunas usando os seus nomes e reporte os resultados encontrados:
+
+```{r}
+
+
+```
+
+
+## 3
+
+Utilize o dataset população países para realizar as seguintes filtragem de linhas e apresente seus resultados:
+
+### Selecione todos os países não Asiáticos:
+
+```{r}
+
+
+```
+
+### Selecione os países não Asiáticos com população acima de 100M:
+
+```{r}
+
+
+```
+
+### Selecione os países Americanos com expectativa de vida menor que 75 anos:
+
+```{r}
+
+
+```
+
+### Selecione os países Asiáticos com população entre 150M e 200M de pessoas:
+
+```{r}
+
+
+```
+
