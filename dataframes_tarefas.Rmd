@@ -1,56 +1,91 @@
 ---
-title: "df_tarefas"
-output:
-  html_document:
-    df_print: paged
+title: "Dataframes"
+output: github_document
 ---
 
-## 1
+<br>
 
-Utilize o dataset população países para aplicar as funções mostradas no slide “Data frames – Atributos e Estrutura” e reporte os resultados encontrados:
+### 1. Utilize o dataset `população países` para aplicar as funções mostradas no slide “Data frames – Atributos e Estrutura” e reporte os resultados encontrados:
+
+```{r criar-df, include=FALSE}
+
+countries <- c("China", "Índia", "Estados Unidos", "Indonésia", "Brasil", 
+               "Paquistão", "Bangladesh", "Nigéria", "Japão", "México")
+
+cont <- c("Ásia", "Ásia", "Américas", "Ásia", "Américas", 
+          "Ásia", "Ásia", "África", "Ásia", "Américas")
+
+pop <- c(1318683096, 1110396331, 301139947, 223547000, 190010647, 
+         169270617, 150448339, 135031164, 127467972, 108700891)
+
+expect <- c(72.961, 64.698, 78.424, 70.65, 72.39, 
+            65.483, 64.062, 46.859, 82.603, 76.195)
+
+most_pop_contries <- data.frame(countries, cont, pop, expect)
+
+```
+
+
+```{r ex-1}
+
+# dimensões do df
+dim(most_pop_contries)
+
+# número de linhas do df
+nrow(most_pop_contries)
+
+# número de colunas do df
+ncol(most_pop_contries)
+
+# nome das dimensões do df
+dimnames(most_pop_contries)
+
+# estrutura do df
+str(most_pop_contries)
+
+```
+
+<br>
+
+### 2. Utilize o dataset `população países` para aplicar o operador [[ mostrados no slide “Data frames – Subconjuntos”, para selecionar colunas usando os seus nomes e reporte os resultados encontrados:
+
+```{r}
+
+# selecionar apenas a coluna com os países
+most_pop_contries[["countries"]]
+
+# selecionar apenas a coluna que contém a população dos países
+most_pop_contries[["pop"]]
+
+```
+
+<br>
+
+### 3. Utilize o dataset população países para realizar as seguintes filtragem de linhas e apresente seus resultados:
+
+#### Selecione todos os países não Asiáticos:
+
+```{r}
+
+most_pop_contries[most_pop_contries$cont != "Ásia",]
+
+```
+
+#### Selecione os países não Asiáticos com população acima de 100M:
 
 ```{r}
 
 
 ```
 
-
-## 2 
-
-Utilize o dataset população países para aplicar o operador [[ mostrados no slide “Data frames – Subconjuntos”, para selecionar colunas usando os seus nomes e reporte os resultados encontrados:
+#### Selecione os países Americanos com expectativa de vida menor que 75 anos:
 
 ```{r}
 
 
 ```
 
-
-## 3
-
-Utilize o dataset população países para realizar as seguintes filtragem de linhas e apresente seus resultados:
-
-### Selecione todos os países não Asiáticos:
-
-```{r}
-
-
-```
-
-### Selecione os países não Asiáticos com população acima de 100M:
-
-```{r}
-
-
-```
-
-### Selecione os países Americanos com expectativa de vida menor que 75 anos:
-
-```{r}
-
-
-```
-
-### Selecione os países Asiáticos com população entre 150M e 200M de pessoas:
+#### Selecione os países Asiáticos com população entre 150M e 200M de pessoas:
 
 ```{r}
 
