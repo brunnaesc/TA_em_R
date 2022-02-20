@@ -87,6 +87,60 @@ most_pop_contries[most_pop_contries$cont != "Ásia",]
 
 #### Selecione os países não Asiáticos com população acima de 100M:
 
+``` r
+most_pop_contries[most_pop_contries$cont != "Ásia" & most_pop_contries$pop > 100000000,]
+```
+
+    ##         countries     cont       pop expect
+    ## 3  Estados Unidos Américas 301139947 78.424
+    ## 5          Brasil Américas 190010647 72.390
+    ## 8         Nigéria   África 135031164 46.859
+    ## 10         México Américas 108700891 76.195
+
 #### Selecione os países Americanos com expectativa de vida menor que 75 anos:
 
+``` r
+most_pop_contries[most_pop_contries$cont == "Américas" & most_pop_contries$expect > 75,]
+```
+
+    ##         countries     cont       pop expect
+    ## 3  Estados Unidos Américas 301139947 78.424
+    ## 10         México Américas 108700891 76.195
+
 #### Selecione os países Asiáticos com população entre 150M e 200M de pessoas:
+
+``` r
+most_pop_contries[most_pop_contries$cont == "Ásia" & most_pop_contries$pop >= 150000000 & most_pop_contries$pop < 200000000,]
+```
+
+    ##    countries cont       pop expect
+    ## 6  Paquistão Ásia 169270617 65.483
+    ## 7 Bangladesh Ásia 150448339 64.062
+
+<br>
+
+### 4. Crie uma nova coluna no dataset `população` a partir da coluna per capita em que os valores são divididos por 1e3:
+
+<br>
+
+### 5. Ordene o dataset `população países` em ordem crescente usando a coluna continente e a coluna de expectativa de vida:
+
+<br>
+
+### 6. Ordene as colunas do dataset `população países` em ordem alfabética:
+
+<br>
+
+### 7. Use o dataset `pessoas` para encontrar as linhas que contenham ao menos um valor NA:
+
+<br>
+
+### 8. Utilize os dataframes do slide que combina colunas com nomes diferentes e aplique a função `merge()` sem indicar colunas para realizar o produto cartesiano desses dados. Apresente o resultado:
+
+<br>
+
+### 9. Encontre a frequência de sobreviventes e não sobreviventes no dataframe `titanic`:
+
+<br>
+
+### 10. Encontre a mediana para agrupamentos por idade e classe para o dataframe `titanic`:

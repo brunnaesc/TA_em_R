@@ -75,6 +75,7 @@ most_pop_contries[most_pop_contries$cont != "Ásia",]
 
 ```{r}
 
+most_pop_contries[most_pop_contries$cont != "Ásia" & most_pop_contries$pop > 100000000,]
 
 ```
 
@@ -82,6 +83,7 @@ most_pop_contries[most_pop_contries$cont != "Ásia",]
 
 ```{r}
 
+most_pop_contries[most_pop_contries$cont == "Américas" & most_pop_contries$expect > 75,]
 
 ```
 
@@ -89,6 +91,34 @@ most_pop_contries[most_pop_contries$cont != "Ásia",]
 
 ```{r}
 
+most_pop_contries[most_pop_contries$cont == "Ásia" & most_pop_contries$pop >= 150000000 & most_pop_contries$pop < 200000000,]
 
 ```
 
+<br>
+
+### 4. Crie uma nova coluna no dataset `população` a partir da coluna per capita em que os valores são divididos por 1e3:
+
+<br>
+
+### 5. Ordene o dataset `população países` em ordem crescente usando a coluna continente e a coluna de expectativa de vida:
+
+<br>
+
+### 6. Ordene as colunas do dataset `população países` em ordem alfabética:
+
+<br>
+
+### 7. Use o dataset `pessoas` para encontrar as linhas que contenham ao menos um valor NA:
+
+<br>
+
+### 8. Utilize os dataframes do slide que combina colunas com nomes diferentes e aplique a função `merge()` sem indicar colunas para realizar o produto cartesiano desses dados. Apresente o resultado:
+
+<br>
+
+### 9. Encontre a frequência de sobreviventes e não sobreviventes no dataframe `titanic`:
+
+<br>
+
+### 10. Encontre a mediana para agrupamentos por idade e classe para o dataframe `titanic`:
