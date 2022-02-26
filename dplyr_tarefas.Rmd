@@ -5,29 +5,111 @@ output: github_document
 
 <br>
 
+```{r data, include=FALSE}
+
+library(tidyverse)
+library(nycflights13)
+
+```
+
+
 ### 1. Encontre voos:
 
 #### Tiveram um atraso de chegada de 2h ou mais:
 
+```{r ex-1a}
+
+flights %>% 
+  filter(dep_delay >= 120)
+
+```
+
+
 #### Voaram para Houston (IAH ou HOU):
+
+```{r ex-1b}
+
+flights %>% 
+  filter(dest %in% c("IAH", "HOU"))
+
+```
+
 
 #### Foram operados pela United, American ou Delta:
 
+```{r ex-1c}
+
+flights %>% 
+  left_join(airlines, by = "carrier") %>% 
+  filter(name %in% c("United Air Lines Inc.", "American Airlines Inc.", "Delta Air Lines Inc."))
+
+```
+
+
 #### Partiram no verão americano (july, august e september):
 
+```{r ex-1d}
+
+flights %>% 
+  filter(month %in% c(7, 8, 9))
+
+```
+
+
 #### Que atrasaram até 1h (partida e chegada) usando as identidades lógicas de De Morgan:
+
+```{r}
+
+flights %>% 
+  filter(dep_delay <= 60, arr_delay <= 60)
+
+flights %>% 
+  filter(!(dep_delay > 60 | arr_delay > 60))
+
+```
 
 <br>
 
 ### 2. Ordene os voos para achar os voos que foram mais rápidos:
 
+```{r ex-2}
+
+flights %>% 
+  arrange(air_time)
+
+```
+
+
 <br>
 
 ### 3. Qual o voo que viajou para mais longe? Qual viajou para mais perto?
 
+```{r ex-3}
+
+# mais perto
+flights %>%
+  arrange(distance) %>% 
+  head(1)
+
+# mais longe
+flights %>%
+  arrange(distance) %>% 
+  tail(1)
+
+```
+
 <br>
 
 ### 4. Use a função `mutate()`a distância da média `(x - mean(x))` para cada atraso de partida e atraso de chegada. Reporte seu resultado:
+
+```{r ex-4}
+
+flights %>% 
+  mutate(mean_dist_arr_delay = arr_delay - mean(arr_delay, na.rm = TRUE),
+         mean_dist_dep_delay = dep_delay - mean(dep_delay, na.rm = TRUE)) %>% 
+  select(flight, arr_delay, mean_dist_arr_delay, dep_delay, mean_dist_dep_delay)
+
+```
 
 <br>
 
@@ -52,3 +134,19 @@ output: github_document
 <br>
 
 ### 10. Encontre a proporção dos aviões que não tiveram atraso na chegada para cada dia do ano:
+
+```{r ex-10}
+
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day),
+         arr_delayed = case_when(arr_delay > 0 ~"yes",
+                                 TRUE ~"no")) %>% 
+  count(dt, arr_delayed) %>% 
+  group_by(dt) %>% 
+  mutate(freq = scales::percent(n / sum(n))) %>% 
+  ungroup() %>% 
+  filter(arr_delayed == "no") %>% 
+  select(dt, freq)
+
+```
+

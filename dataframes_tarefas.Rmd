@@ -7,7 +7,7 @@ output: github_document
 
 ### 1. Utilize o dataset `população países` para aplicar as funções mostradas no slide “Data frames – Atributos e Estrutura” e reporte os resultados encontrados:
 
-```{r criar-df, include=FALSE}
+```{r criar-dfs, include=FALSE}
 
 countries <- c("China", "Índia", "Estados Unidos", "Indonésia", "Brasil", 
                "Paquistão", "Bangladesh", "Nigéria", "Japão", "México")
@@ -21,7 +21,18 @@ pop <- c(1318683096, 1110396331, 301139947, 223547000, 190010647,
 expect <- c(72.961, 64.698, 78.424, 70.65, 72.39, 
             65.483, 64.062, 46.859, 82.603, 76.195)
 
-most_pop_contries <- data.frame(countries, cont, pop, expect)
+per_capita <- c(4959, 2452, 42952, 3541, 9066, 2606, 1391, 2014, 31656, 11978)
+
+
+most_pop_countries <- data.frame(countries, cont, pop, expect, per_capita)
+
+
+pessoas <- data.frame(
+  nome = I(c("Solange", "Emmanuel", NA, "Claire", NA, "Leonel")),
+  idade = c(33, 35, 39, 37, 29, 26),
+  altura = c(165, NA, 168, 160, NA, 175),
+  peso = c(65, 105, 70, 85, 80, 80)
+)
 
 ```
 
@@ -29,19 +40,19 @@ most_pop_contries <- data.frame(countries, cont, pop, expect)
 ```{r ex-1}
 
 # dimensões do df
-dim(most_pop_contries)
+dim(most_pop_countries)
 
 # número de linhas do df
-nrow(most_pop_contries)
+nrow(most_pop_countries)
 
 # número de colunas do df
-ncol(most_pop_contries)
+ncol(most_pop_countries)
 
 # nome das dimensões do df
-dimnames(most_pop_contries)
+dimnames(most_pop_countries)
 
 # estrutura do df
-str(most_pop_contries)
+str(most_pop_countries)
 
 ```
 
@@ -49,13 +60,13 @@ str(most_pop_contries)
 
 ### 2. Utilize o dataset `população países` para aplicar o operador [[ mostrados no slide “Data frames – Subconjuntos”, para selecionar colunas usando os seus nomes e reporte os resultados encontrados:
 
-```{r}
+```{r ex-2}
 
 # selecionar apenas a coluna com os países
-most_pop_contries[["countries"]]
+most_pop_countries[["countries"]]
 
 # selecionar apenas a coluna que contém a população dos países
-most_pop_contries[["pop"]]
+most_pop_countries[["pop"]]
 
 ```
 
@@ -65,33 +76,33 @@ most_pop_contries[["pop"]]
 
 #### Selecione todos os países não Asiáticos:
 
-```{r}
+```{r ex-3a}
 
-most_pop_contries[most_pop_contries$cont != "Ásia",]
+most_pop_countries[most_pop_countries$cont != "Ásia",]
 
 ```
 
 #### Selecione os países não Asiáticos com população acima de 100M:
 
-```{r}
+```{r ex-3b}
 
-most_pop_contries[most_pop_contries$cont != "Ásia" & most_pop_contries$pop > 100000000,]
+most_pop_countries[most_pop_countries$cont != "Ásia" & most_pop_countries$pop > 100000000,]
 
 ```
 
 #### Selecione os países Americanos com expectativa de vida menor que 75 anos:
 
-```{r}
+```{r ex-3c}
 
-most_pop_contries[most_pop_contries$cont == "Américas" & most_pop_contries$expect > 75,]
+most_pop_countries[most_pop_countries$cont == "Américas" & most_pop_countries$expect > 75,]
 
 ```
 
 #### Selecione os países Asiáticos com população entre 150M e 200M de pessoas:
 
-```{r}
+```{r ex-3d}
 
-most_pop_contries[most_pop_contries$cont == "Ásia" & most_pop_contries$pop >= 150000000 & most_pop_contries$pop < 200000000,]
+most_pop_countries[most_pop_countries$cont == "Ásia" & most_pop_countries$pop >= 150000000 & most_pop_countries$pop < 200000000,]
 
 ```
 
@@ -99,26 +110,68 @@ most_pop_contries[most_pop_contries$cont == "Ásia" & most_pop_contries$pop >= 1
 
 ### 4. Crie uma nova coluna no dataset `população` a partir da coluna per capita em que os valores são divididos por 1e3:
 
+```{r ex-4}
+
+most_pop_countries$new_col <- most_pop_countries$pop / 1000
+
+most_pop_countries
+
+```
+
 <br>
 
 ### 5. Ordene o dataset `população países` em ordem crescente usando a coluna continente e a coluna de expectativa de vida:
+
+```{r ex-5}
+
+most_pop_countries[order(most_pop_countries$cont, most_pop_countries$expect),]
+
+```
 
 <br>
 
 ### 6. Ordene as colunas do dataset `população países` em ordem alfabética:
 
+```{r ex-6}
+
+most_pop_countries[,order(names(most_pop_countries))]
+
+```
+
 <br>
 
 ### 7. Use o dataset `pessoas` para encontrar as linhas que contenham ao menos um valor NA:
+
+```{r ex-7}
+
+pessoas[!complete.cases(pessoas),]
+
+```
 
 <br>
 
 ### 8. Utilize os dataframes do slide que combina colunas com nomes diferentes e aplique a função `merge()` sem indicar colunas para realizar o produto cartesiano desses dados. Apresente o resultado:
 
+```{r ex-8}
+
+
+
+```
+
 <br>
 
 ### 9. Encontre a frequência de sobreviventes e não sobreviventes no dataframe `titanic`:
 
+```{r ex-9}
+
+
+```
+
 <br>
 
 ### 10. Encontre a mediana para agrupamentos por idade e classe para o dataframe `titanic`:
+
+```{r ex-10}
+
+```
+
