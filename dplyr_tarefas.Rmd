@@ -115,13 +115,44 @@ flights %>%
 
 ### 5. Repita o cálculo do atraso de partida (dep_delay) por data adicionando o parâmetro `na.rm` na função de agregação. Qual é a média de atraso para o dia 05/01/2013?
 
+```{r ex-5}
+
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  group_by(dt) %>% 
+  summarise(mean_dep_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  filter(dt == as.Date("2013-01-05"))
+
+```
+
 <br>
 
 ### 6. Na análise apresentada nos slides sobre frequências, faça a filtragem dos dados para considerar aeronaves (grupos) que tenham pelo menos 25 amostras (n > 25). Dica: utilize o código apresentado para criar o dataframe e adicione uma condição usando `filter()`:
 
+```{r ex-6}
+
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>% 
+  group_by(tailnum) %>% 
+  filter(n() > 25) %>% 
+  summarise(n = n(),
+            mean_dep_delay = mean(dep_delay))
+
+```
+
 <br>
 
 ### 7. Considerando o cálculo das médias por data apresentadas no slide de funções de agregação úteis, calcule a mediana para os voos não cancelados e compare os resultados:
+
+```{r ex-7}
+
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x)))
+
+```
 
 <br>
 
