@@ -9,23 +9,23 @@ dplyr
 
 ``` r
 flights %>% 
-  filter(dep_delay >= 120)
+  filter(arr_delay >= 120)
 ```
 
-    ## # A tibble: 9,888 x 19
+    ## # A tibble: 10,200 x 19
     ##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
     ##    <int> <int> <int>    <int>          <int>     <dbl>    <int>          <int>
-    ##  1  2013     1     1      848           1835       853     1001           1950
-    ##  2  2013     1     1      957            733       144     1056            853
-    ##  3  2013     1     1     1114            900       134     1447           1222
-    ##  4  2013     1     1     1540           1338       122     2020           1825
-    ##  5  2013     1     1     1815           1325       290     2120           1542
-    ##  6  2013     1     1     1842           1422       260     1958           1535
-    ##  7  2013     1     1     1856           1645       131     2212           2005
-    ##  8  2013     1     1     1934           1725       129     2126           1855
-    ##  9  2013     1     1     1938           1703       155     2109           1823
-    ## 10  2013     1     1     1942           1705       157     2124           1830
-    ## # ... with 9,878 more rows, and 11 more variables: arr_delay <dbl>,
+    ##  1  2013     1     1      811            630       101     1047            830
+    ##  2  2013     1     1      848           1835       853     1001           1950
+    ##  3  2013     1     1      957            733       144     1056            853
+    ##  4  2013     1     1     1114            900       134     1447           1222
+    ##  5  2013     1     1     1505           1310       115     1638           1431
+    ##  6  2013     1     1     1525           1340       105     1831           1626
+    ##  7  2013     1     1     1549           1445        64     1912           1656
+    ##  8  2013     1     1     1558           1359       119     1718           1515
+    ##  9  2013     1     1     1732           1630        62     2028           1825
+    ## 10  2013     1     1     1803           1620       103     2008           1750
+    ## # ... with 10,190 more rows, and 11 more variables: arr_delay <dbl>,
     ## #   carrier <chr>, flight <int>, tailnum <chr>, origin <chr>, dest <chr>,
     ## #   air_time <dbl>, distance <dbl>, hour <dbl>, minute <dbl>, time_hour <dttm>
 
@@ -239,21 +239,193 @@ flights %>%
 
 ### 5. Repita o cálculo do atraso de partida (dep\_delay) por data adicionando o parâmetro `na.rm` na função de agregação. Qual é a média de atraso para o dia 05/01/2013?
 
+``` r
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  group_by(dt) %>% 
+  summarise(mean_dep_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  filter(dt == as.Date("2013-01-05"))
+```
+
+    ## # A tibble: 1 x 2
+    ##   dt         mean_dep_delay
+    ##   <date>              <dbl>
+    ## 1 2013-01-05           5.73
+
 <br>
 
 ### 6. Na análise apresentada nos slides sobre frequências, faça a filtragem dos dados para considerar aeronaves (grupos) que tenham pelo menos 25 amostras (n &gt; 25). Dica: utilize o código apresentado para criar o dataframe e adicione uma condição usando `filter()`:
+
+``` r
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>% 
+  group_by(tailnum) %>% 
+  filter(n() >= 25) %>% 
+  summarise(n = n(),
+            mean_dep_delay = mean(dep_delay))
+```
+
+    ## # A tibble: 2,967 x 3
+    ##    tailnum     n mean_dep_delay
+    ##    <chr>   <int>          <dbl>
+    ##  1 N0EGMQ    352          8.51 
+    ##  2 N10156    145         18.0  
+    ##  3 N102UW     48          8    
+    ##  4 N103US     46         -3.20 
+    ##  5 N104UW     46         10.1  
+    ##  6 N10575    269         22.1  
+    ##  7 N105UW     45          2.58 
+    ##  8 N107US     41         -0.463
+    ##  9 N108UW     60          4.22 
+    ## 10 N109UW     48          0.104
+    ## # ... with 2,957 more rows
 
 <br>
 
 ### 7. Considerando o cálculo das médias por data apresentadas no slide de funções de agregação úteis, calcule a mediana para os voos não cancelados e compare os resultados:
 
+``` r
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>% 
+  group_by(dt) %>% 
+  summarise(median_arr_delay = median(arr_delay),
+            median_pos_arr_delay = mean(arr_delay > 0))
+```
+
+    ## # A tibble: 365 x 3
+    ##    dt         median_arr_delay median_pos_arr_delay
+    ##    <date>                <dbl>                <dbl>
+    ##  1 2013-01-01                3                0.555
+    ##  2 2013-01-02                4                0.577
+    ##  3 2013-01-03                1                0.511
+    ##  4 2013-01-04               -8                0.327
+    ##  5 2013-01-05               -7                0.332
+    ##  6 2013-01-06               -1                0.460
+    ##  7 2013-01-07              -10                0.261
+    ##  8 2013-01-08               -7                0.308
+    ##  9 2013-01-09               -6                0.321
+    ## 10 2013-01-10              -11                0.237
+    ## # ... with 355 more rows
+
 <br>
 
 ### 8. A partir dos exemplos apresentados para funções de agregações úteis, especialmente aqueles que utilizam a função de medidas de rank e aquelas que usam medidas de posição, explique a diferença entre as funções `first(x)` e `min(x)` bem como as funções `last(x)` e `max(x)`:
 
+``` r
+# as funções first() e last() retornam o primeiro e o último valor de um vetor, respectivamente
+# o primeiro voo a decolar no dia 10/01 teve a duração de 183min e o último 35min
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
+  group_by(dt) %>%
+  summarise(first_air_time = first(air_time),
+            last_air_time = last(air_time))
+```
+
+    ## # A tibble: 365 x 3
+    ##    dt         first_air_time last_air_time
+    ##    <date>              <dbl>         <dbl>
+    ##  1 2013-01-01            227           186
+    ##  2 2013-01-02            189           180
+    ##  3 2013-01-03            193           199
+    ##  4 2013-01-04            194           199
+    ##  5 2013-01-05            201           195
+    ##  6 2013-01-06            197           199
+    ##  7 2013-01-07            202           196
+    ##  8 2013-01-08             77           190
+    ##  9 2013-01-09            193            54
+    ## 10 2013-01-10            183            35
+    ## # ... with 355 more rows
+
+``` r
+# vale ressaltar que first() e last() selecionam valores com base na ordem em que o df está
+# se ordenarmos o df pela coluna sched_dep_time verificamos que 
+# o primeiro voo programado para decolar no dia 10/01 durou 78min e o último 191min
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
+  arrange(dt, sched_dep_time) %>% 
+  group_by(dt) %>%
+  summarise(first_air_time = first(air_time),
+            last_air_time = last(air_time))
+```
+
+    ## # A tibble: 365 x 3
+    ##    dt         first_air_time last_air_time
+    ##    <date>              <dbl>         <dbl>
+    ##  1 2013-01-01            227           186
+    ##  2 2013-01-02            108           180
+    ##  3 2013-01-03             94           199
+    ##  4 2013-01-04             77           199
+    ##  5 2013-01-05             85           195
+    ##  6 2013-01-06             88           199
+    ##  7 2013-01-07             86           196
+    ##  8 2013-01-08             77           190
+    ##  9 2013-01-09             87           188
+    ## 10 2013-01-10             78           191
+    ## # ... with 355 more rows
+
+``` r
+# as funções min() e max() retornam o menor e o maior valor de um vetor, respectivamente
+# o voo mais curto do dia 10/01 durou 24min e o mais longo 633min
+# a ordenação das colunas do df não afeta o resultado dessas funções
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
+  group_by(dt) %>%
+  summarise(min_air_time = min(air_time),
+            nax_air_time = max(air_time))
+```
+
+    ## # A tibble: 365 x 3
+    ##    dt         min_air_time nax_air_time
+    ##    <date>            <dbl>        <dbl>
+    ##  1 2013-01-01           24          659
+    ##  2 2013-01-02           24          638
+    ##  3 2013-01-03           25          628
+    ##  4 2013-01-04           26          639
+    ##  5 2013-01-05           23          635
+    ##  6 2013-01-06           22          611
+    ##  7 2013-01-07           23          620
+    ##  8 2013-01-08           25          645
+    ##  9 2013-01-09           25          667
+    ## 10 2013-01-10           24          633
+    ## # ... with 355 more rows
+
+``` r
+# o primeiro valor de uma coluna (first()) não é igual ao menor valor (min()) dessa mesma coluna
+# assim como o último (last()) não é similar ao maior (max())
+```
+
 <br>
 
 ### 9. Modifique o exemplo apresentado para funções de contagem condicionais a testes lógicos para encontrar quantos aviões chegaram após as 23h30 por dia:
+
+``` r
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
+  group_by(dt) %>% 
+  summarise(n_late_night = sum(arr_time > 2330))
+```
+
+    ## # A tibble: 365 x 2
+    ##    dt         n_late_night
+    ##    <date>            <int>
+    ##  1 2013-01-01           26
+    ##  2 2013-01-02           20
+    ##  3 2013-01-03           19
+    ##  4 2013-01-04           14
+    ##  5 2013-01-05           14
+    ##  6 2013-01-06            7
+    ##  7 2013-01-07           14
+    ##  8 2013-01-08           13
+    ##  9 2013-01-09            6
+    ## 10 2013-01-10           10
+    ## # ... with 355 more rows
 
 <br>
 
@@ -261,28 +433,23 @@ flights %>%
 
 ``` r
 flights %>% 
-  mutate(dt = lubridate::make_date(year, month, day),
-         arr_delayed = case_when(arr_delay > 0 ~"yes",
-                                 TRUE ~"no")) %>% 
-  count(dt, arr_delayed) %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
   group_by(dt) %>% 
-  mutate(freq = scales::percent(n / sum(n))) %>% 
-  ungroup() %>% 
-  filter(arr_delayed == "no") %>% 
-  select(dt, freq)
+  summarise(not_delayed_perc = scales::percent(mean(arr_delay <= 0)))
 ```
 
     ## # A tibble: 365 x 2
-    ##    dt         freq  
-    ##    <date>     <chr> 
-    ##  1 2013-01-01 45.2% 
-    ##  2 2013-01-02 43%   
-    ##  3 2013-01-03 49.67%
-    ##  4 2013-01-04 68%   
-    ##  5 2013-01-05 67%   
-    ##  6 2013-01-06 54.2% 
-    ##  7 2013-01-07 74%   
-    ##  8 2013-01-08 69%   
-    ##  9 2013-01-09 68%   
-    ## 10 2013-01-10 76%   
+    ##    dt         not_delayed_perc
+    ##    <date>     <chr>           
+    ##  1 2013-01-01 45%             
+    ##  2 2013-01-02 42%             
+    ##  3 2013-01-03 49%             
+    ##  4 2013-01-04 67%             
+    ##  5 2013-01-05 67%             
+    ##  6 2013-01-06 54%             
+    ##  7 2013-01-07 74%             
+    ##  8 2013-01-08 69%             
+    ##  9 2013-01-09 68%             
+    ## 10 2013-01-10 76%             
     ## # ... with 355 more rows

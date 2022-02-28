@@ -20,7 +20,7 @@ library(nycflights13)
 ```{r ex-1a}
 
 flights %>% 
-  filter(dep_delay >= 120)
+  filter(arr_delay >= 120)
 
 ```
 
@@ -136,7 +136,7 @@ flights %>%
   mutate(dt = lubridate::make_date(year, month, day)) %>% 
   filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>% 
   group_by(tailnum) %>% 
-  filter(n() > 25) %>% 
+  filter(n() >= 25) %>% 
   summarise(n = n(),
             mean_dep_delay = mean(dep_delay))
 
@@ -150,7 +150,10 @@ flights %>%
 
 flights %>% 
   mutate(dt = lubridate::make_date(year, month, day)) %>% 
-  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x)))
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>% 
+  group_by(dt) %>% 
+  summarise(median_arr_delay = median(arr_delay),
+            median_pos_arr_delay = mean(arr_delay > 0))
 
 ```
 
@@ -158,9 +161,57 @@ flights %>%
 
 ### 8. A partir dos exemplos apresentados para funções de agregações úteis, especialmente aqueles que utilizam a função de medidas de rank e aquelas que usam medidas de posição, explique a diferença entre as funções `first(x)` e `min(x)` bem como as funções `last(x)` e `max(x)`:
 
+```{r}
+
+# as funções first() e last() retornam o primeiro e o último valor de um vetor, respectivamente
+# o primeiro voo a decolar no dia 10/01 teve a duração de 183min e o último 35min
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
+  group_by(dt) %>%
+  summarise(first_air_time = first(air_time),
+            last_air_time = last(air_time))
+
+# vale ressaltar que first() e last() selecionam valores com base na ordem em que o df está
+# se ordenarmos o df pela coluna sched_dep_time verificamos que 
+# o primeiro voo programado para decolar no dia 10/01 durou 78min e o último 191min
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
+  arrange(dt, sched_dep_time) %>% 
+  group_by(dt) %>%
+  summarise(first_air_time = first(air_time),
+            last_air_time = last(air_time))
+
+  
+# as funções min() e max() retornam o menor e o maior valor de um vetor, respectivamente
+# o voo mais curto do dia 10/01 durou 24min e o mais longo 633min
+# a ordenação das colunas do df não afeta o resultado dessas funções
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
+  group_by(dt) %>%
+  summarise(min_air_time = min(air_time),
+            nax_air_time = max(air_time))
+
+# o primeiro valor de uma coluna (first()) não é igual ao menor valor (min()) dessa mesma coluna
+# assim como o último (last()) não é similar ao maior (max())
+
+```
+
 <br>
 
 ### 9. Modifique o exemplo apresentado para funções de contagem condicionais a testes lógicos para encontrar quantos aviões chegaram após as 23h30 por dia:
+
+```{r}
+
+flights %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
+  group_by(dt) %>% 
+  summarise(n_late_night = sum(arr_time > 2330))
+  
+```
 
 <br>
 
@@ -169,15 +220,10 @@ flights %>%
 ```{r ex-10}
 
 flights %>% 
-  mutate(dt = lubridate::make_date(year, month, day),
-         arr_delayed = case_when(arr_delay > 0 ~"yes",
-                                 TRUE ~"no")) %>% 
-  count(dt, arr_delayed) %>% 
+  mutate(dt = lubridate::make_date(year, month, day)) %>% 
+  filter(if_all(c(arr_delay, dep_delay), ~!is.na(.x))) %>%
   group_by(dt) %>% 
-  mutate(freq = scales::percent(n / sum(n))) %>% 
-  ungroup() %>% 
-  filter(arr_delayed == "no") %>% 
-  select(dt, freq)
+  summarise(not_delayed_perc = scales::percent(mean(arr_delay <= 0)))
 
 ```
 
